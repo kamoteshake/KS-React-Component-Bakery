@@ -1,6 +1,6 @@
-<div style="text-align: center;">
+<p align="center">
   <img src="/images/logo.png" width="200px" height="auto" alt="logo" />
-</div>
+</p>
 
 # 🍞 KS React Component Bakery
 **Welcome to the KS React Component Bakery** — the only place in VS Code where your React components rise to perfection.
