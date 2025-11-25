@@ -1,4 +1,4 @@
-<center><img src="/images/logo.png" alt="logo" /></center>
+<center><img src="/images/logo.png" width="200px" height="auto" alt="logo" /></center>
 
 # 🍞 KS React Component Bakery
 **Welcome to the KS React Component Bakery** — the only place in VS Code where your React components rise to perfection.
