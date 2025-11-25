@@ -1,3 +1,5 @@
+<center><img src="/images/logo.png" alt="logo" /></center>
+
 # 🍞 KS React Component Bakery
 **Welcome to the KS React Component Bakery** — the only place in VS Code where your React components rise to perfection.
 Why knead boilerplate by hand when the bakery can mix, proof, and bake everything for you?
