@@ -5,7 +5,7 @@ import { createComponent } from './componentGenerator';
 
 export function activate(context: vscode.ExtensionContext) {
   const disposable = vscode.commands.registerCommand(
-    'ks-react-component-generator.addComponent',
+    'ks-react-component-bakery.addComponent',
     async (uri: vscode.Uri) => {
       // if there is no uri (using the button or the command palette)
       // or the uri is the workspace directory, try to get the

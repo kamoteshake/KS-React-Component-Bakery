@@ -1,13 +1,13 @@
 {
-  "name": "ks-react-component-generator",
-  "displayName": "KS React Component Generator",
-  "description": "React component directory and file generator",
+  "name": "ks-react-component-bakery",
+  "displayName": "KS React Component Bakery",
+  "description": "Warm, fluffy, and ready-to-code React components.",
   "version": "1.0.0",
   "publisher": "Kamoteshake",
   "icon": "./images/logo.png",
   "repository": {
     "type": "git",
-    "url": "https://github.com/kamoteshake/KS-React-Component-Generator"
+    "url": "https://github.com/kamoteshake/KS-React-Component-Bakery"
   },
   "engines": {
     "vscode": "^1.106.1"
@@ -20,7 +20,7 @@
   "contributes": {
     "commands": [
       {
-        "command": "ks-react-component-generator.addComponent",
+        "command": "ks-react-component-bakery.addComponent",
         "title": "New React Component",
         "icon": "$(add)"
       }
@@ -28,14 +28,14 @@
     "menus": {
       "view/title": [
         {
-          "command": "ks-react-component-generator.addComponent",
+          "command": "ks-react-component-bakery.addComponent",
           "when": "view == workbench.explorer.fileView",
           "group": "navigation@1"
         }
       ],
       "explorer/context": [
         {
-          "command": "ks-react-component-generator.addComponent",
+          "command": "ks-react-component-bakery.addComponent",
           "group": "navigation@6",
           "when": "resourceScheme == 'file'"
         }
