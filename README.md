@@ -34,10 +34,39 @@ There are a couple of validation happening when typing the component name.
 #### No Duplicate Components
 ![no duplicates](/images/no_duplicates.png)
 
+## 🥣 Ingredient Options
+
+### 🟦 Use TypeScript
+Generate your component using `.tsx` / `.ts` instead of `.jsx` / `.js`.  
+Perfect for kitchens that love type safety.
+
+### ⚛️ Target React 18+
+Adds React 18-compatible patterns to the baked component.
+
+### 🧪 Generate Test File
+Includes a ready-to-use test file:
+`ComponentName.spec.tsx`
+
+### 🧱 Named Export
+Exports your component like:
+```ts
+export { ComponentName } from './ComponentName'
+```
+
+### 🍱 Export All (requires Named Export)
+Re-exports everything from the component module:
+```ts
+export * from './ComponentName'
+```
+
+Useful for barrel files and cleaner imports.
+
 ## 🍪 Known Issues
 Since there isn't an official API to get the selected file's URI, I had to utilize the `copyFilePath` command. This copies the file path to the clipboard. I have added some processes which retains your last clipboard entry but it will lose its rich state in some OS.
 
 ## 🎉 Release Notes
-### 1.0.0
+### 1.1.0
+Added Export All option
 
+### 1.0.0
 Initial release of KS React Component Bakery
