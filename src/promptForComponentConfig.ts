@@ -4,12 +4,13 @@ import { componentDirExists } from './utils';
 export interface ComponentOptions {
   typescript: boolean;
   react18: boolean;
-  namedExport: boolean;
   testFile: boolean;
+  namedExport: boolean;
+  exportAll: boolean;
 }
 
 interface OptionItem extends vscode.QuickPickItem {
-  id: 'typescript' | 'react18' | 'namedExport' | 'testFile';
+  id: 'typescript' | 'react18' | 'testFile' | 'namedExport' | 'exportAll';
 }
 
 export async function promptForComponentConfig(
@@ -71,39 +72,120 @@ export async function promptForComponentConfig(
       description: 'Use patterns suitable for React 18+',
     },
     {
+      id: 'testFile',
+      label: 'Generate test file',
+      picked: false,
+      description: 'Create a basic test file next to the component',
+    },
+    {
       id: 'namedExport',
       label: 'Named Export',
       picked: false,
       description: 'Export component as named instead of default',
     },
     {
-      id: 'testFile',
-      label: 'Generate test file',
+      id: 'exportAll',
+      label: 'Export All',
       picked: false,
-      description: 'Create a basic test file next to the component',
+      description:
+        'Use export * from "./ComponentName" (only valid with Named Export)',
     },
   ];
 
-  const selected = await vscode.window.showQuickPick(optionItems, {
-    title: `Options for ${name}`,
-    canPickMany: true,
-    ignoreFocusOut: true,
-    placeHolder: 'Select what you want to generate',
+  // setup quick pick
+  const qp = vscode.window.createQuickPick<OptionItem>();
+  qp.title = `Options for ${name}`;
+  qp.canSelectMany = true;
+  qp.ignoreFocusOut = true;
+  qp.items = optionItems;
+  qp.placeholder = 'Select what you want to generate';
+
+  // initial selection
+  qp.selectedItems = optionItems.filter((item) => item.picked);
+
+  // track selection explicitly
+  let selectedIds = new Set(qp.selectedItems.map((item) => item.id));
+
+  const results = await new Promise<
+    { name: string; options: ComponentOptions } | undefined
+  >((resolve) => {
+    qp.onDidChangeSelection((selection) => {
+      const newSelected = new Set(selection.map((item) => item.id));
+
+      const hadNamedExportBefore = selectedIds.has('namedExport');
+      const hasNamedExportNow = newSelected.has('namedExport');
+
+      const hadExportAllBefore = selectedIds.has('exportAll');
+      const hasExportAllNow = newSelected.has('exportAll');
+
+      // if Named Export is unselected but Export All is selected,
+      // silently unselect Export ALl
+      if (hadNamedExportBefore && !hasNamedExportNow && hasExportAllNow) {
+        newSelected.delete('exportAll');
+
+        selectedIds = newSelected;
+        qp.selectedItems = optionItems.filter((item) =>
+          newSelected.has(item.id)
+        );
+
+        return;
+      }
+
+      // if Export All is selected but Named Export is not, disable and revert
+      if (hasExportAllNow && !hasNamedExportNow && !hadExportAllBefore) {
+        vscode.window.showInformationMessage(
+          'Export All requires Named Export to be enabled.'
+        );
+
+        newSelected.delete('exportAll');
+
+        selectedIds = newSelected;
+        qp.selectedItems = optionItems.filter((item) =>
+          newSelected.has(item.id)
+        );
+
+        return;
+      }
+
+      // if Named Export was just selected, auto-select Export All
+      if (!hadNamedExportBefore && hasNamedExportNow && !hasExportAllNow) {
+        newSelected.add('exportAll');
+
+        selectedIds = newSelected;
+        qp.selectedItems = optionItems.filter((item) =>
+          newSelected.has(item.id)
+        );
+
+        return;
+      }
+
+      // normal path: just track selection and update description
+      selectedIds = newSelected;
+    });
+
+    qp.onDidAccept(() => {
+      const finalIds = new Set(qp.selectedItems.map((item) => item.id));
+
+      const options: ComponentOptions = {
+        typescript: finalIds.has('typescript'),
+        react18: finalIds.has('react18'),
+        testFile: finalIds.has('testFile'),
+        namedExport: finalIds.has('namedExport'),
+        // Export All only makes sense if namedExport is true
+        exportAll: finalIds.has('namedExport') && finalIds.has('exportAll'),
+      };
+
+      qp.hide();
+      resolve({ name, options });
+    });
+
+    qp.onDidHide(() => {
+      qp.dispose();
+      resolve(undefined);
+    });
+
+    qp.show();
   });
 
-  if (!selected) {
-    // user cancelled here
-    return undefined;
-  }
-
-  const selectedIds = new Set(selected.map((s) => s.id));
-
-  const options: ComponentOptions = {
-    typescript: selectedIds.has('typescript'),
-    react18: selectedIds.has('react18'),
-    namedExport: selectedIds.has('namedExport'),
-    testFile: selectedIds.has('testFile'),
-  };
-
-  return { name, options };
+  return results;
 }

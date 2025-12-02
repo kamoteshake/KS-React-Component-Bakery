@@ -46,10 +46,14 @@ export async function createComponent(
   // setup index file
   const indexFile = vscode.Uri.joinPath(componentDir, `index.${ext}`);
 
+  const exportComponent = `{ ${
+    options.namedExport ? componentName : 'default'
+  } }`;
+
   const indexContent = dedent`
-    export { ${
-      options.namedExport ? componentName : 'default'
-    } } from './${componentName}'
+    export ${
+      options.exportAll ? '*' : exportComponent
+    } from './${componentName}'
 
   `;
 
