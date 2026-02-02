@@ -65,6 +65,9 @@ Useful for barrel files and cleaner imports.
 Since there isn't an official API to get the selected file's URI, I had to utilize the `copyFilePath` command. This copies the file path to the clipboard. I have added some processes which retains your last clipboard entry but it will lose its rich state in some OS.
 
 ## 🎉 Release Notes
+### 1.2.0
+Allow camelCase as component name ONLY if it starts with `use`, indicating it is a hook.
+
 ### 1.1.0
 Added Export All option
 
