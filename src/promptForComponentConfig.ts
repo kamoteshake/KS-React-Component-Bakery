@@ -14,7 +14,7 @@ interface OptionItem extends vscode.QuickPickItem {
 }
 
 export async function promptForComponentConfig(
-  baseDir: vscode.Uri
+  baseDir: vscode.Uri,
 ): Promise<{ name: string; options: ComponentOptions } | undefined> {
   // prompt for the component name
   const name = await vscode.window.showInputBox({
@@ -38,9 +38,17 @@ export async function promptForComponentConfig(
         return 'Only letters and numbers are allowed.';
       }
 
+      const isHook = trimmed.startsWith('use');
+
       // case check
-      if (!/^[A-Z][A-Za-z0-9]*$/.test(trimmed)) {
-        return 'Must be PascalCase (e.g., MyComponent, UserCard).';
+      if (isHook) {
+        if (!/^use[A-Z][A-Za-z0-9]*$/.test(trimmed)) {
+          return 'Hooks must be camelCase and start with "use" followed by a capital letter (e.g., useAuth).';
+        }
+      } else {
+        if (!/^[A-Z][A-Za-z0-9]*$/.test(trimmed)) {
+          return 'Must be PascalCase (e.g., MyComponent, UserCard).';
+        }
       }
 
       // check if the component exists in the selected directory
@@ -125,7 +133,7 @@ export async function promptForComponentConfig(
 
         selectedIds = newSelected;
         qp.selectedItems = optionItems.filter((item) =>
-          newSelected.has(item.id)
+          newSelected.has(item.id),
         );
 
         return;
@@ -134,14 +142,14 @@ export async function promptForComponentConfig(
       // if Export All is selected but Named Export is not, disable and revert
       if (hasExportAllNow && !hasNamedExportNow && !hadExportAllBefore) {
         vscode.window.showInformationMessage(
-          'Export All requires Named Export to be enabled.'
+          'Export All requires Named Export to be enabled.',
         );
 
         newSelected.delete('exportAll');
 
         selectedIds = newSelected;
         qp.selectedItems = optionItems.filter((item) =>
-          newSelected.has(item.id)
+          newSelected.has(item.id),
         );
 
         return;
@@ -153,7 +161,7 @@ export async function promptForComponentConfig(
 
         selectedIds = newSelected;
         qp.selectedItems = optionItems.filter((item) =>
-          newSelected.has(item.id)
+          newSelected.has(item.id),
         );
 
         return;
